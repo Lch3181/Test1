@@ -11,8 +11,9 @@ public class PlayerControl : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
     private float inputH, inputV;
     private bool LeftShift, LeftClick;
+    public float health;
     public float moveSpeed;
-    
+    private bool Dead = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,15 +25,18 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //get key input
-        inputH = Input.GetAxis("Horizontal");
-        inputV = Input.GetAxis("Vertical");
-        LeftClick = Input.GetKey(KeyCode.Mouse0);
-        LeftShift = Input.GetKey(KeyCode.LeftShift);
+        if (!Dead)
+        {
+            //get key input
+            inputH = Input.GetAxis("Horizontal");
+            inputV = Input.GetAxis("Vertical");
+            LeftClick = Input.GetKey(KeyCode.Mouse0);
+            LeftShift = Input.GetKey(KeyCode.LeftShift);
 
-        Rotation();
+            Rotation();
 
-        Movement();
+            Movement();
+        }
     }
 
     //Rotation
@@ -65,38 +69,50 @@ public class PlayerControl : MonoBehaviour
     //Player movement
     void Movement()
     {
-        
-        // is the controller on the ground?
-        if (controller.isGrounded)
+
+        if (health <= 0)
         {
-            //Feed moveDirection with input.
-            moveDirection = new Vector3(inputH, 0, inputV);
-            moveDirection = transform.TransformDirection(moveDirection);
-            //Multiply it by speed.
-            moveDirection *= moveSpeed;
-            //Jumping
-            //if (Input.GetButton("Jump"))
-            //    moveDirection.y = moveSpeed;
+            GetComponentInChildren<LineRenderer>().enabled=false;
+            controller.height = 0.6f;
+            Dead = !Dead;
+            animator.Play("Death from the front");
 
         }
-        //Applying gravity to the controller
-        moveDirection.y -= 20f * Time.deltaTime;
-        //Making the character move
-        if(LeftShift)//run
+        else if(health >0 )
         {
-            controller.Move(moveDirection * 5f * Time.deltaTime);
-        }
-        else//walk
-        {
-            controller.Move(moveDirection * Time.deltaTime);
-        }
-        
 
-        //Animation
-        animator.SetFloat("inputH", inputH);
-        animator.SetFloat("inputV", inputV);
-        animator.SetBool("run", LeftShift);
-        animator.SetBool("Fire", LeftClick);
+            // is the controller on the ground?
+            if (controller.isGrounded)
+            {
+                //Feed moveDirection with input.
+                moveDirection = new Vector3(inputH, 0, inputV);
+                moveDirection = transform.TransformDirection(moveDirection);
+                //Multiply it by speed.
+                moveDirection *= moveSpeed;
+                //Jumping
+                //if (Input.GetButton("Jump"))
+                //    moveDirection.y = moveSpeed;
+
+            }
+            //Applying gravity to the controller
+            moveDirection.y -= 20f * Time.deltaTime;
+            //Making the character move
+            if (LeftShift)//run
+            {
+                controller.Move(moveDirection * 5f * Time.deltaTime);
+            }
+            else//walk
+            {
+                controller.Move(moveDirection * Time.deltaTime);
+            }
+
+
+            //Animation
+            animator.SetFloat("inputH", inputH);
+            animator.SetFloat("inputV", inputV);
+            animator.SetBool("run", LeftShift);
+            animator.SetBool("Fire", LeftClick);
+        }
     }
 
 }

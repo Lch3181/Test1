@@ -28,7 +28,10 @@ public class Bullet : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.name);
+        if(collision.gameObject.tag=="Enemy")
+        {
+            collision.gameObject.GetComponent<Enemy>().takeDamage(Damage);
+        }
         Destroy(this.gameObject);
     }
 }
