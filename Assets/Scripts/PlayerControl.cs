@@ -10,7 +10,7 @@ public class PlayerControl : MonoBehaviour
     public GameObject Mesh;
     private Vector3 moveDirection = Vector3.zero;
     private float inputH, inputV;
-    private bool LeftShift;
+    private bool LeftShift, LeftClick;
     public float moveSpeed;
     
 
@@ -27,6 +27,7 @@ public class PlayerControl : MonoBehaviour
         //get key input
         inputH = Input.GetAxis("Horizontal");
         inputV = Input.GetAxis("Vertical");
+        LeftClick = Input.GetKey(KeyCode.Mouse0);
         LeftShift = Input.GetKey(KeyCode.LeftShift);
 
         Rotation();
@@ -95,7 +96,7 @@ public class PlayerControl : MonoBehaviour
         animator.SetFloat("inputH", inputH);
         animator.SetFloat("inputV", inputV);
         animator.SetBool("run", LeftShift);
-        animator.SetBool("Fire", Input.GetButton("Fire1"));
+        animator.SetBool("Fire", LeftClick);
     }
 
 }

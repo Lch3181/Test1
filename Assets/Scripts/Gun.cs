@@ -5,9 +5,10 @@ using UnityEngine;
 public class Gun : MonoBehaviour
 {
 
-    public ParticleSystem ShootEffect;
-    public GameObject Bullet;
-    public GameObject FirePoint;
+    //public ParticleSystem ShootEffect;
+    public AudioSource audioSource;
+    public Rigidbody Bullet;
+    public Transform FirePoint;
     public float FireRate;
 
     private float delay = 0;
@@ -15,22 +16,20 @@ public class Gun : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (ShootEffect = GetComponent<ParticleSystem>())
-        {
 
-        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Fire point position: "+FirePoint.transform.position);
 
         delay -= Time.deltaTime;
 
-        if(Input.GetButton("Fire1"))
+        if(Input.GetKey(KeyCode.Mouse0))
         {
+            
             Shoot();
+            
         }
     }
 
@@ -39,7 +38,10 @@ public class Gun : MonoBehaviour
     {
         if (delay <= 0)
         {
-            Instantiate(Bullet, FirePoint.transform.position, FirePoint.transform.rotation);
+            audioSource.Play();
+            Rigidbody rigidbodyInstance;
+            rigidbodyInstance = Instantiate(Bullet, FirePoint.position, FirePoint.rotation) as Rigidbody;
+            rigidbodyInstance.AddForce(FirePoint.forward * 1000);
             delay = FireRate;
         }
     }
