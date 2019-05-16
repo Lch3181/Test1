@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
 
@@ -12,7 +10,7 @@ public class Enemy : MonoBehaviour
     private Slider healthBar;
     public float damage;
     protected float velocity;
-    public Transform Target;
+    private Transform Target;
     private NavMeshAgent agent;
     protected static Animator animator;
     private bool Dead = false;
@@ -22,6 +20,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        Target = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         health = maxHealth;
@@ -40,7 +39,8 @@ public class Enemy : MonoBehaviour
         else if(health>0)
         {
             //set to chase target
-            agent.SetDestination(Target.position);
+            if(agent.isActiveAndEnabled)
+                agent.SetDestination(Target.position);
 
             //get velocity
             velocity = agent.velocity.magnitude / agent.speed;
@@ -95,7 +95,7 @@ public class Enemy : MonoBehaviour
     {
         //set argument values
         animator.SetFloat("Speed", velocity);
-        animator.SetBool("Attack", inRange() && attackCD <= 0);
+        animator.SetBool("Attack", InRange() && attackCD <= 0);
         //attack
         attackCD -= Time.deltaTime;
         if(animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) //stop moving when attacking
@@ -112,7 +112,7 @@ public class Enemy : MonoBehaviour
     //Animation event
     protected virtual void AttackEnd()
     {
-        if(inRange())
+        if(InRange())
         {
             Target.GetComponent<PlayerControl>().takeDamage(damage);
             attackCD = attackRate;
@@ -120,9 +120,12 @@ public class Enemy : MonoBehaviour
         
     }
     //check if target still in range
-    protected bool inRange()
+    protected bool InRange()
     {
-        return agent.remainingDistance <= agent.stoppingDistance;
+        if (agent.isActiveAndEnabled)
+            return agent.remainingDistance <= agent.stoppingDistance;
+        else
+            return false;
     }
 
 }

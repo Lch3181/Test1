@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -41,7 +40,7 @@ public class Gun : MonoBehaviour
             //ray cast
             RaycastHit hit;
             //set laser position to player.orgin
-            laserLine.SetPosition(0, RayOrigin.position);
+            laserLine.SetPosition(0, Firepoint.position);
             //check if ray hit
             if(Physics.Raycast(RayOrigin.position, RayOrigin.TransformDirection(Vector3.forward), out hit, Range))
             {
@@ -62,7 +61,7 @@ public class Gun : MonoBehaviour
             }
             else//else just draw the laser
             {
-                laserLine.SetPosition(1, RayOrigin.position + RayOrigin.TransformDirection(Vector3.forward) * Range);
+                laserLine.SetPosition(1, Firepoint.position + RayOrigin.TransformDirection(Vector3.forward) * Range);
             }
 
         }
@@ -80,9 +79,9 @@ public class Gun : MonoBehaviour
 
     private IEnumerator ForceEffect(NavMeshAgent agent)
     {
-        agent.isStopped = true;
+        agent.enabled = false;
         yield return new WaitForSeconds(0.5f);
-        agent.isStopped = false;
+        agent.enabled=true;
     }
 
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
@@ -13,7 +11,7 @@ public class PlayerControl : MonoBehaviour
     private Vector3 moveDirection = Vector3.zero;
     private float inputH, inputV;
     private bool LeftShift, LeftClick;
-    private float health;
+    public float health;
     public Slider healthBar;
     public float maxHealth;
     public float moveSpeed;

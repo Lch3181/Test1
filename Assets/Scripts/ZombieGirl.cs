@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ZombieGirl : Enemy
 {
@@ -45,7 +43,7 @@ public class ZombieGirl : Enemy
     {
         audioActive.clip = null;
         base.AttackEnd();
-        if(inRange())
+        if(InRange())
         {
             audioActive.PlayOneShot(audioClipActive[0]);
         }
