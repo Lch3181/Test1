@@ -1,21 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Gun : MonoBehaviour
 {
+    public float damage;
+    public float fireRate;
+    public float Range;
+    public float Force;
+    public Transform RayOrigin;
+    public Transform Firepoint;
 
-    //public ParticleSystem ShootEffect;
-    public AudioSource audioSource;
-    public Rigidbody Bullet;
-    public Transform FirePoint;
-    public float FireRate;
-
-    private float delay = 0;
+    private WaitForSeconds shotDuration = new WaitForSeconds(0.07f);
+    private AudioSource gunAudio;
+    public LineRenderer laserLine;
+    private float nextFire;
 
     // Start is called before the first frame update
     void Start()
     {
+        gunAudio = GetComponent<AudioSource>();
 
     }
 
@@ -23,26 +28,61 @@ public class Gun : MonoBehaviour
     void Update()
     {
 
-        delay -= Time.deltaTime;
-
-        if(Input.GetKey(KeyCode.Mouse0))
-        {
-            
-            Shoot();
-            
-        }
     }
 
-    //Fire bullet
-    void Shoot()
+    public void Shoot()
     {
-        if (delay <= 0)
+        if(Time.time>nextFire)
         {
-            audioSource.Play();
-            Rigidbody rigidbodyInstance;
-            rigidbodyInstance = Instantiate(Bullet, FirePoint.position, FirePoint.rotation) as Rigidbody;
-            rigidbodyInstance.AddForce(FirePoint.forward * 1000);
-            delay = FireRate;
+            //effect
+            StartCoroutine(ShotEffect());
+            //fire delay
+            nextFire = Time.time + fireRate;
+            //ray cast
+            RaycastHit hit;
+            //set laser position to player.orgin
+            laserLine.SetPosition(0, RayOrigin.position);
+            //check if ray hit
+            if(Physics.Raycast(RayOrigin.position, RayOrigin.TransformDirection(Vector3.forward), out hit, Range))
+            {
+                //set laser end point to hit point
+                laserLine.SetPosition(1, hit.point);
+                //hit enemy
+                if (hit.collider.tag=="Enemy")
+                {
+                    hit.collider.GetComponent<Enemy>().takeDamage(damage);
+                    StartCoroutine(ForceEffect(hit.collider.GetComponent<NavMeshAgent>()));
+                }
+
+                //add force
+                if(hit.rigidbody != null)
+                {
+                    hit.rigidbody.AddForce(-hit.normal * Force);
+                }
+            }
+            else//else just draw the laser
+            {
+                laserLine.SetPosition(1, RayOrigin.position + RayOrigin.TransformDirection(Vector3.forward) * Range);
+            }
+
         }
+        
     }
+
+    //effect
+    private IEnumerator ShotEffect()
+    {
+        gunAudio.Play();
+        laserLine.enabled = true;
+        yield return shotDuration;
+        laserLine.enabled = false;
+    }
+
+    private IEnumerator ForceEffect(NavMeshAgent agent)
+    {
+        agent.isStopped = true;
+        yield return new WaitForSeconds(0.5f);
+        agent.isStopped = false;
+    }
+
 }

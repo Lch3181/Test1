@@ -1,25 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
 {
     static Animator animator;
 
     private CharacterController controller;
+    private Gun gun;
     public GameObject Mesh;
     private Vector3 moveDirection = Vector3.zero;
     private float inputH, inputV;
     private bool LeftShift, LeftClick;
-    public float health;
+    private float health;
+    public Slider healthBar;
+    public float maxHealth;
     public float moveSpeed;
-    private bool Dead = false;
+    private bool Dead;
 
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
         controller = GetComponent<CharacterController>();
+        health = maxHealth;
+        gun = GetComponentInChildren<Gun>();
     }
 
     // Update is called once per frame
@@ -36,6 +42,8 @@ public class PlayerControl : MonoBehaviour
             Rotation();
 
             Movement();
+
+            UI();
         }
     }
 
@@ -89,9 +97,6 @@ public class PlayerControl : MonoBehaviour
                 moveDirection = transform.TransformDirection(moveDirection);
                 //Multiply it by speed.
                 moveDirection *= moveSpeed;
-                //Jumping
-                //if (Input.GetButton("Jump"))
-                //    moveDirection.y = moveSpeed;
 
             }
             //Applying gravity to the controller
@@ -106,6 +111,13 @@ public class PlayerControl : MonoBehaviour
                 controller.Move(moveDirection * Time.deltaTime);
             }
 
+            //shoot
+            if(Input.GetAxis("Fire1") >=0.1f)
+            {
+                gun.Shoot();
+            }
+            
+
 
             //Animation
             animator.SetFloat("inputH", inputH);
@@ -113,6 +125,22 @@ public class PlayerControl : MonoBehaviour
             animator.SetBool("run", LeftShift);
             animator.SetBool("Fire", LeftClick);
         }
+    }
+
+    //UI
+    void UI()
+    {
+        healthBar.value = healthbar();
+    }
+    float healthbar()
+    {
+        return health / maxHealth;
+    }
+
+    //take damage
+    public void takeDamage(float dmg)
+    {
+        health -= dmg;
     }
 
 }
