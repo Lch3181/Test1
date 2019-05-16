@@ -359,11 +359,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff220bd3437d4a4aa9206c818be181c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 10
+  damage: 25
   fireRate: 0.2
   Range: 50
   Force: 100
-  gunEnd: {fileID: 0}
+  RayOrigin: {fileID: 0}
+  Firepoint: {fileID: 0}
+  laserLine: {fileID: 0}
 --- !u!82 &5539930201416245771
 AudioSource:
   m_ObjectHideFlags: 0

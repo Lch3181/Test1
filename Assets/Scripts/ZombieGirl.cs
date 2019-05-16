@@ -22,20 +22,14 @@ public class ZombieGirl : Enemy
             audioPassive.Stop();
         }
         base.Animation();
-        if (velocity>0 && !audioActive.isPlaying)
-        {
-            audioActive.clip = audioClipActive[1];
-            audioActive.Play();
-        }
+    }
 
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("walk"))
-        {
-            audioActive.pitch = 1F;
-        }
-        else if(animator.GetCurrentAnimatorStateInfo(0).IsName("run"))
-        {
-            audioActive.pitch = 1.8F;
-        }
+    //override Die to remove audio
+    protected override void Die()
+    {
+        base.Die();
+        audioActive.Stop();
+        audioPassive.Stop();
     }
 
     //override attack end to add audio

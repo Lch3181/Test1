@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     protected float velocity;
     private Transform Target;
     private NavMeshAgent agent;
-    protected static Animator animator;
+    protected Animator animator;
     private bool Dead = false;
     public float attackRate;
     private float attackCD;
@@ -22,10 +22,14 @@ public class Enemy : MonoBehaviour
     {
         Target = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        agent.enabled = true;
         animator = GetComponent<Animator>();
         health = maxHealth;
         attackCD = attackRate;
+        GUI.SetActive(true);
         healthBar = GetComponentInChildren<Slider>();
+        GetComponent<CapsuleCollider>().enabled = true;
+        
     }
 
     // Update is called once per frame
@@ -34,12 +38,12 @@ public class Enemy : MonoBehaviour
         if (health <= 0 && !Dead)
         {
             Die();
-            
+
         }
-        else if(health>0)
+        else if (health > 0)
         {
             //set to chase target
-            if(agent.isActiveAndEnabled)
+            if (agent.isActiveAndEnabled)
                 agent.SetDestination(Target.position);
 
             //get velocity
@@ -47,20 +51,19 @@ public class Enemy : MonoBehaviour
 
             //Animation
             Animation();
-                
-           
+
+
         }
         //UI
         UI();
     }
 
     //Die
-    void Die()
+    protected virtual void Die()
     {
-        GetComponent<CapsuleCollider>().height = 0.3f;
-        //agent.height = 0;
+        GetComponent<CapsuleCollider>().enabled = false;
         agent.enabled = false;
-        animator.Play("Dead");
+        animator.Play("Dead"); 
         Dead = !Dead;
     }
 
@@ -98,7 +101,7 @@ public class Enemy : MonoBehaviour
         animator.SetBool("Attack", InRange() && attackCD <= 0);
         //attack
         attackCD -= Time.deltaTime;
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) //stop moving when attacking
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack")) //stop moving when attacking
         {
             agent.velocity = Vector3.zero;
         }
@@ -108,6 +111,7 @@ public class Enemy : MonoBehaviour
             FaceTarget();
         }
     }
+
 
     //Animation event
     protected virtual void AttackEnd()

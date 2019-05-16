@@ -79,9 +79,13 @@ public class Gun : MonoBehaviour
 
     private IEnumerator ForceEffect(NavMeshAgent agent)
     {
-        agent.enabled = false;
+        agent.isStopped = true;
         yield return new WaitForSeconds(0.5f);
-        agent.enabled=true;
+        if (agent.isActiveAndEnabled)
+        {
+            agent.isStopped = false;
+        }
+        
     }
 
 }
